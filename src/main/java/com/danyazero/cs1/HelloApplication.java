@@ -18,7 +18,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -26,8 +25,8 @@ import java.util.HashMap;
 import java.util.function.BiConsumer;
 
 public class HelloApplication extends Application {
-    private static final int BIN_COUNT = 10;
-    private static final int BATCH_SIZE = 100;
+    private Label skvLabel;
+    private Label kLabel;
 
     private final HashMap<String, BatchGenerator> generators = new HashMap<>();
     private BarChart<String, Number> barChart;
@@ -102,7 +101,12 @@ public class HelloApplication extends Application {
         var inputBox = new VBox(sizeInputBox, batchSizeInputBox, binsCountInputBox);
         inputBox.setPrefWidth(250);
 
-        var controls = new HBox(new VBox(firstStrategy, secondStrategy), inputBox, generateButton);
+        skvLabel = new Label("Розраховане значення критерію: --");
+        kLabel = new Label("Ступені свободи: --");
+        var marks = new VBox(skvLabel, kLabel);
+        marks.setAlignment(Pos.CENTER_LEFT);
+
+        var controls = new HBox(new VBox(firstStrategy, secondStrategy), inputBox, generateButton, marks);
         controls.setSpacing(20);
         controls.setAlignment(Pos.CENTER_LEFT);
 
@@ -116,10 +120,18 @@ public class HelloApplication extends Application {
 
     }
 
-    public void runGenerator(BatchGenerator selectedGenerator, int size, int binSize) {
+    public void runGenerator(BatchGenerator selectedGenerator, int size, int binCount) {
         BiConsumer<int[], BatchGenerator> batchCallback = (array, generator) -> {
             double[] normalizedArray = ArrayNormalizer.apply(array, generator);
-            int[] histogram = HistogramUtility.build(normalizedArray, binSize);
+            int[] histogram = HistogramUtility.build(normalizedArray, binCount);
+
+            var skv = calculateSKV(histogram, size, binCount);
+            var dof = binCount - 1.0;
+            Platform.runLater(() -> {
+                skvLabel.setText(String.format("Розраховане значення критерію: %.2f", skv));
+                kLabel.setText(String.format("Ступені свободи: %.2f", dof));
+            });
+
 
             Platform.runLater(() -> {
                 updateHistogram(histogram);
@@ -141,6 +153,17 @@ public class HelloApplication extends Application {
         }
 
         barChart.getData().add(series);
+    }
+
+    public static double calculateSKV(int[] array, int n, int binsCount) {
+        var expectedFrequency = n * (1.0 / binsCount);
+        var skv = 0.0;
+        for (double value : array) {
+            var a = value - expectedFrequency;
+            skv += (a*a)/expectedFrequency;
+        }
+
+        return skv;
     }
 
 }
