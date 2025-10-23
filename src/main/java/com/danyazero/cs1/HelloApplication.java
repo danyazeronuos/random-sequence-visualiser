@@ -7,16 +7,21 @@ import com.danyazero.cs1.utils.HistogramUtility;
 import com.danyazero.cs1.utils.LinearGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 
@@ -59,19 +64,28 @@ public class HelloApplication extends Application {
         sizeInput.setPromptText("Enter sequence size...");
         sizeInput.setText("10000");
         var sizeInputLabel = new Label("Sequence Size:");
-        var sizeInputBox = new HBox(sizeInputLabel, sizeInput);
+
+        var sizeInputBox = new BorderPane();
+        sizeInputBox.setLeft(sizeInputLabel);
+        sizeInputBox.setRight(sizeInput);
 
         var binsCountInput = new TextField();
         binsCountInput.setPromptText("Enter number of bins...");
         binsCountInput.setText("20");
         var binsCountInputLabel = new Label("Bins Count:");
-        var binsCountInputBox = new HBox(binsCountInputLabel, binsCountInput);
+
+        var binsCountInputBox = new BorderPane();
+        binsCountInputBox.setLeft(binsCountInputLabel);
+        binsCountInputBox.setRight(binsCountInput);
 
         var batchSizeInput = new TextField();
         batchSizeInput.setPromptText("Enter batch size...");
         batchSizeInput.setText("100");
         var batchSizeInputLabel = new Label("Batch Size:");
-        var batchSizeInputBox = new HBox(batchSizeInputLabel, batchSizeInput);
+
+        var batchSizeInputBox = new BorderPane();
+        batchSizeInputBox.setLeft(batchSizeInputLabel);
+        batchSizeInputBox.setRight(batchSizeInput);
 
         var generateButton = new Button("Generate");
         generateButton.setOnAction(event -> {
@@ -86,8 +100,11 @@ public class HelloApplication extends Application {
             }
         });
         var inputBox = new VBox(sizeInputBox, batchSizeInputBox, binsCountInputBox);
+        inputBox.setPrefWidth(250);
 
         var controls = new HBox(new VBox(firstStrategy, secondStrategy), inputBox, generateButton);
+        controls.setSpacing(20);
+        controls.setAlignment(Pos.CENTER_LEFT);
 
         var root = new VBox(controls, barChart);
 

@@ -1,6 +1,7 @@
 module com.danyazero.cs1 {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
 
     opens com.danyazero.cs1 to javafx.fxml;
