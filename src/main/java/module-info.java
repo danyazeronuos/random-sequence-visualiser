@@ -7,4 +7,5 @@ module com.danyazero.cs1 {
     opens com.danyazero.cs1 to javafx.fxml;
     exports com.danyazero.cs1;
     exports com.danyazero.cs1.model;
+    exports com.danyazero.cs1.generators;
 }

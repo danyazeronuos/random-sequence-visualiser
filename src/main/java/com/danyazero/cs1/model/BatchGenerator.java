@@ -5,9 +5,9 @@ import java.util.function.BiConsumer;
 public abstract class BatchGenerator {
 
     protected int batchSize;
-    protected BiConsumer<int[], BatchGenerator> batchCallback;
+    protected BiConsumer<long[], BatchGenerator> batchCallback;
 
-    public BatchGenerator(int batchSize, BiConsumer<int[], BatchGenerator> batchCallback) {
+    public BatchGenerator(int batchSize, BiConsumer<long[], BatchGenerator> batchCallback) {
         this.batchSize = batchSize;
         this.batchCallback = batchCallback;
     }
@@ -16,10 +16,10 @@ public abstract class BatchGenerator {
         this(0, null);
     }
 
-    public abstract int[] generate(int size);
-    public abstract double normalize(int value);
+    public abstract long[] generate(int size);
+    public abstract double normalize(long value);
 
-    public void setBatchCallback(BiConsumer<int[], BatchGenerator> batchCallback) {
+    public void setBatchCallback(BiConsumer<long[], BatchGenerator> batchCallback) {
         this.batchCallback = batchCallback;
     }
 

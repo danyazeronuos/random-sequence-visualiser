@@ -1,10 +1,11 @@
 package com.danyazero.cs1;
 
+import com.danyazero.cs1.generators.LaggedFibonacciGenerator;
 import com.danyazero.cs1.model.BatchGenerator;
 import com.danyazero.cs1.utils.ArrayNormalizer;
-import com.danyazero.cs1.utils.CombinedTausworthe;
+import com.danyazero.cs1.generators.TauswortheGenerator;
 import com.danyazero.cs1.utils.HistogramUtility;
-import com.danyazero.cs1.utils.LinearGenerator;
+import com.danyazero.cs1.generators.LinearGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -20,7 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.awt.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 
@@ -43,6 +44,8 @@ public class HelloApplication extends Application {
         barChart = new BarChart<>(xAxis, yAxis);
         barChart.setTitle("Random Sequence Histogram");
         barChart.setAnimated(false);
+        barChart.setCategoryGap(0);
+        barChart.setBarGap(0);
 
 
         var strategyGroup = new ToggleGroup();
@@ -57,11 +60,17 @@ public class HelloApplication extends Application {
         var secondStrategy = new RadioButton("Tausworthe");
         secondStrategy.setToggleGroup(strategyGroup);
         var tauswortheSeeds = linearGenerator.generate(3);
-        generators.put("Tausworthe", new CombinedTausworthe(tauswortheSeeds[0], tauswortheSeeds[1], tauswortheSeeds[2]));
+        generators.put("Tausworthe", new TauswortheGenerator(tauswortheSeeds[0], tauswortheSeeds[1], tauswortheSeeds[2]));
+
+        var thirdStrategy = new RadioButton("Fibonacci");
+        thirdStrategy.setToggleGroup(strategyGroup);
+        var fibonacciSeeds = linearGenerator.generate(1279);
+        generators.put("Fibonacci", new LaggedFibonacciGenerator(fibonacciSeeds, 418));
+
 
         var sizeInput = new TextField();
         sizeInput.setPromptText("Enter sequence size...");
-        sizeInput.setText("10000");
+        sizeInput.setText("100000");
         var sizeInputLabel = new Label("Sequence Size:");
 
         var sizeInputBox = new BorderPane();
@@ -106,7 +115,7 @@ public class HelloApplication extends Application {
         var marks = new VBox(skvLabel, kLabel);
         marks.setAlignment(Pos.CENTER_LEFT);
 
-        var controls = new HBox(new VBox(firstStrategy, secondStrategy), inputBox, generateButton, marks);
+        var controls = new HBox(new VBox(firstStrategy, secondStrategy, thirdStrategy), inputBox, generateButton, marks);
         controls.setSpacing(20);
         controls.setAlignment(Pos.CENTER_LEFT);
 
@@ -121,7 +130,7 @@ public class HelloApplication extends Application {
     }
 
     public void runGenerator(BatchGenerator selectedGenerator, int size, int binCount) {
-        BiConsumer<int[], BatchGenerator> batchCallback = (array, generator) -> {
+        BiConsumer<long[], BatchGenerator> batchCallback = (array, generator) -> {
             double[] normalizedArray = ArrayNormalizer.apply(array, generator);
             int[] histogram = HistogramUtility.build(normalizedArray, binCount);
 

@@ -1,18 +1,18 @@
-package com.danyazero.cs1.utils;
+package com.danyazero.cs1.generators;
 
 import com.danyazero.cs1.model.BatchGenerator;
 
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
-public class CombinedTausworthe extends BatchGenerator {
+public class TauswortheGenerator extends BatchGenerator {
     private long s1;
     private long s2;
     private long s3;
 
-    private int[] generatedValues;
+    private long[] generatedValues;
 
-    public CombinedTausworthe(long s1, long s2, long s3, int batchSize, BiConsumer<int[], BatchGenerator> batchCallback) {
+    public TauswortheGenerator(long s1, long s2, long s3, int batchSize, BiConsumer<long[], BatchGenerator> batchCallback) {
         super(batchSize, batchCallback);
         this.s1 = s1 & 0xFFFFFFFFL;
         this.s2 = s2 & 0xFFFFFFFFL;
@@ -23,14 +23,14 @@ public class CombinedTausworthe extends BatchGenerator {
         if (this.s3 < 16) this.s3 = 16;
     }
 
-    public CombinedTausworthe(long s1, long s2, long s3) {
+    public TauswortheGenerator(long s1, long s2, long s3) {
         this(s1, s2, s3, 0, null);
     }
 
 
     @Override
-    public int[] generate(int size) {
-        generatedValues = new int[size];
+    public long[] generate(int size) {
+        generatedValues = new long[size];
         for (int i = 0; i < size; i++) {
             var result = generate();
             generatedValues[i] = result;
@@ -44,19 +44,17 @@ public class CombinedTausworthe extends BatchGenerator {
     }
 
     @Override
-    public double normalize(int value) {
+    public double normalize(long value) {
         return  (value & 0xFFFFFFFFL) / 4294967296.0;
     }
 
-    public int generate() {
+    public long generate() {
         s1 = (((s1 & 0xFFFFFFFEL) << 12) ^ (((s1 << 13) ^ s1) >>> 19)) & 0xFFFFFFFFL;
         s2 = (((s2 & 0xFFFFFFF8L) << 4) ^ (((s2 << 2) ^ s2) >>> 25)) & 0xFFFFFFFFL;
         s3 = (((s3 & 0xFFFFFFF0L) << 17) ^ (((s3 << 3) ^ s3) >>> 11)) & 0xFFFFFFFFL;
 
-        var result = (s1 ^ s2 ^ s3) & 0xFFFFFFFFL;
 
-
-        return (int) result;
+        return (s1 ^ s2 ^ s3) ;
     }
 
 }

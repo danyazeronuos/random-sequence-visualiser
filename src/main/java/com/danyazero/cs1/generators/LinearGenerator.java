@@ -1,4 +1,4 @@
-package com.danyazero.cs1.utils;
+package com.danyazero.cs1.generators;
 
 import com.danyazero.cs1.model.BatchGenerator;
 
@@ -12,7 +12,7 @@ public class LinearGenerator extends BatchGenerator {
 
     private final int seed;
 
-    public LinearGenerator(int seed, int batchSize, BiConsumer<int[], BatchGenerator> batchCallback) {
+    public LinearGenerator(int seed, int batchSize, BiConsumer<long[], BatchGenerator> batchCallback) {
         super(batchSize, batchCallback);
         this.seed = seed;
     }
@@ -22,8 +22,8 @@ public class LinearGenerator extends BatchGenerator {
     }
 
     @Override
-    public int[] generate(int size) {
-        int[] generatedValues = new int[size];
+    public long[] generate(int size) {
+        long[] generatedValues = new long[size];
         int value = seed;
 
         for (int i = 0; i < size; i++) {
@@ -31,7 +31,7 @@ public class LinearGenerator extends BatchGenerator {
             generatedValues[i] = value;
 
             if (this.batchSize > 0 && i % this.batchSize == 0) {
-                int[] batch = Arrays.copyOfRange(generatedValues, 0, i);
+                long[] batch = Arrays.copyOfRange(generatedValues, 0, i);
                 this.batchCallback.accept(batch, this);
             }
         }
@@ -40,7 +40,7 @@ public class LinearGenerator extends BatchGenerator {
     }
 
     @Override
-    public double normalize(int value) {
+    public double normalize(long value) {
         return ((double) value) / m;
     }
 
