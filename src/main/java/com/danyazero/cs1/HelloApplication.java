@@ -1,6 +1,7 @@
 package com.danyazero.cs1;
 
 import com.danyazero.cs1.generators.LaggedFibonacciGenerator;
+import com.danyazero.cs1.generators.PermutedGenerator;
 import com.danyazero.cs1.model.BatchGenerator;
 import com.danyazero.cs1.utils.ArrayNormalizer;
 import com.danyazero.cs1.generators.TauswortheGenerator;
@@ -67,6 +68,11 @@ public class HelloApplication extends Application {
         var fibonacciSeeds = linearGenerator.generate(1279);
         generators.put("Fibonacci", new LaggedFibonacciGenerator(fibonacciSeeds, 418));
 
+        var fourthStrategy = new RadioButton("Permuted");
+        fourthStrategy.setToggleGroup(strategyGroup);
+        generators.put("Permuted", new PermutedGenerator(fibonacciSeeds[418]));
+
+
 
         var sizeInput = new TextField();
         sizeInput.setPromptText("Enter sequence size...");
@@ -115,7 +121,7 @@ public class HelloApplication extends Application {
         var marks = new VBox(skvLabel, kLabel);
         marks.setAlignment(Pos.CENTER_LEFT);
 
-        var controls = new HBox(new VBox(firstStrategy, secondStrategy, thirdStrategy), inputBox, generateButton, marks);
+        var controls = new HBox(new VBox(firstStrategy, secondStrategy, thirdStrategy, fourthStrategy), inputBox, generateButton, marks);
         controls.setSpacing(20);
         controls.setAlignment(Pos.CENTER_LEFT);
 
